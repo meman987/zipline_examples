@@ -20,7 +20,7 @@ bundle = bundles.load('random_stock_data')
 
 bundle.asset_finder.retrieve_all(bundle.asset_finder.sids)
 [Equity(0 [AAPL]), Equity(1 [IBM]), Equity(2 [KO]), Equity(3 [MSFT])]
-
+```
 
 ## Problem - no 'US' equities after ingest of random_stock_data
 
