@@ -12,6 +12,10 @@ up in the folder `./csv`.
 
 ## Import data into zipline
 
+Make sure that `PYTHONPATH` includes this folder: `export PYTHONPATH=$PYTHONPATH:$HOME/<git_repo>/clenow_book/1_Data_Management`.
+[`direnv`](https://direnv.net/) is a good tool to automate management of environment variables!
+
+
 Have a look at `extension.py` in `zipline-files` and copy it to `~/.zipline`.
 
 Then do try this:
@@ -28,11 +32,13 @@ zipline bundles
 # view the contents of a bundles
 python3
 from zipline.data import bundles
+from random_stock_data import random_stock_data
+bundles.register('random_stock_data', random_stock_data.random_stock_data, calendar_name='NYSE')
 
 bundle = bundles.load('random_stock_data')
 
 bundle.asset_finder.retrieve_all(bundle.asset_finder.sids)
-[Equity(0 [AAPL]), Equity(1 [IBM]), Equity(2 [KO]), Equity(3 [MSFT])]
+[Equity(0 [AAPL]), Equity(1 [SPY])]
 ```
 
 ## Problem - no 'US' equities after ingest of random_stock_data
