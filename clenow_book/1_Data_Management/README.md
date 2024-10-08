@@ -5,7 +5,7 @@ Here are some examples and notes taken when reading Trading Evolved by
 
 ## Test data
 
-We some data to work with. Here we'll use the [yfinance](https://pypi.org/project/yfinance/)
+We need some data to work with. Here we'll use the [yfinance](https://pypi.org/project/yfinance/)
 package to download some test data. Run `python3 yf.py` and some test data should end
 up in the folder `./csv`.
 
@@ -40,6 +40,17 @@ bundle = bundles.load('random_stock_data')
 bundle.asset_finder.retrieve_all(bundle.asset_finder.sids)
 [Equity(0 [AAPL]), Equity(1 [SPY])]
 ```
+
+## Calendars
+
+Exchange calendars are key in zipline. There cannot be any transactions outside the window where 
+the exchange is open. There are packages that are maintained by others, now that quantopian is
+'dead'. See [pandas-market-calendars](https://pypi.org/project/pandas-market-calendars/) and 
+[exchange-calendars](https://pypi.org/project/exchange-calendars/).
+
+`calendar_example.py` and `calendar_example2.py` shows some use cases for calendars.
+
+
 
 ## Problem - no 'US' equities after ingest of random_stock_data
 
