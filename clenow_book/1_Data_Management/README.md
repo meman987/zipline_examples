@@ -3,6 +3,19 @@
 Here are some examples and notes taken when reading Trading Evolved by 
 [Andreas Clenow](https://www.clenow.com/books).
 
+## Test data
+
+We some data to work with. Here we'll use the [yfinance](https://pypi.org/project/yfinance/)
+package to download some test data. Run `python3 yf.py` and some test data should end
+up in the folder `./csv`.
+
+
+## Import data into zipline
+
+Have a look at `extension.py` in `zipline-files` and copy it to `~/.zipline`.
+
+Then do try this:
+
 ```
 zipline ingest -b random_stock_data
 
