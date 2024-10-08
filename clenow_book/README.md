@@ -1,7 +1,7 @@
 # Data Management
 
-Here are some examples and notes taken when reading [Trading Evolved](https://www.clenow.com/books)
-by Andreas Clenow.
+Here are some examples and notes taken when reading Trading Evolved by 
+[Andreas Clenow](https://www.clenow.com/books).
 
 ```
 zipline ingest -b random_stock_data
