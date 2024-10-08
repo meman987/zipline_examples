@@ -51,6 +51,10 @@ the exchange is open. There are packages that are maintained by others, now that
 `calendar_example.py` and `calendar_example2.py` shows some use cases for calendars.
 
 
+## View Time Series
+
+Try `show_bundle.py` and `show_bunlde2.py`. You'll probably get an error. See below for a solution.
+
 
 ## Problem - no 'US' equities after ingest of random_stock_data
 
