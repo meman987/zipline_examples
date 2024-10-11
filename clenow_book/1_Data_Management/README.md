@@ -3,6 +3,11 @@
 Here are some examples and notes taken when reading Trading Evolved by 
 [Andreas Clenow](https://www.clenow.com/books).
 
+Some good stuff about Zipline Data Management can be found [here](https://pypi.org/project/zipline-norgatedata/).
+In particular, see the note about Zipline only using 20 years of data and 
+suggested patch!
+
+
 ## Test data
 
 We need some data to work with. Here we'll use the [yfinance](https://pypi.org/project/yfinance/)
@@ -89,3 +94,23 @@ print(importlib.util.find_spec("zipline"))
 ```
 
 Copy file `zipline-files/assets.py` to this folder and try `show_bundles2.py` again.
+
+
+## More tickers for Yahoo Finance
+
+IMPORTANT: The Yahoo Finance Futures data is not back adjusted so it shouldn't be used without corrections!
+
+Here are some tickers that can be used with `yf.py`:
+
+currencies:      `6A=F,6B=F,6C=F,6E=F,6J=F,6N=F,6S=F`
+softs:           `CT=F,CC=F,OJ=F,SB=F,KC=F,LBS=F`
+meat:            `GF=F,HE=F,LE=F`
+grains:          `ZC=F,ZO=F,KE=F,ZR=F,ZM=F,ZS=F`
+equities:        `ES=F,YM=F,NQ=F,RTY=F`
+fixed income:    `ZB=F,ZN=F,ZF=F,ZT=F`
+precious metals: `GC=F,SI=F,HG=F,PA=F,PL=F`
+energy:          `CL=F,HO=F,RB=F,NG=F,BZ=F`
+
+All: `6A=F,6B=F,6C=F,6E=F,6J=F,6N=F,6S=F,CT=F,CC=F,OJ=F,SB=F,KC=F,LBS=F,GF=F,HE=F,LE=F,ZC=F,ZO=F,KE=F,ZR=F,ZM=F,ZS=F,ES=F,YM=F,NQ=F,RTY=F,ZB=F,ZN=F,ZF=F,ZT=F,GC=F,SI=F,HG=F,PA=F,PL=F,CL=F,HO=F,RB=F,NG=F,BZ=F`
+
+NOTE: Use single quotes around these in bash.
