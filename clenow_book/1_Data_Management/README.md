@@ -140,6 +140,11 @@ to ingest this data.
 SierraChart has reasonable pricing and support both equities and futures. Only windows is suported but it works fine
 in [Wine](https://www.winehq.org/) if you're on MacOS or Linux.
 
+I use a watch list (`Chart > Associated Watch List`) with the symbols I'm interested in. It is easy to update all tickers in one go using `Chart > Start Scan`.
+Check `Global Seting > Data Trade/Service Settings` and set `Maximum Historical Days to Download` to some high number (I use 20000).
+There is a limit to how many downloads that can be peformed, but it is generous. Open the Message Log to see the progress
+and if there are any erros.
+
 Set the envioronment variable `SC_DATA` and run `zipline ingest -b sc_futures_data` to ingest futures.
 SierraChart do not provide expirations dates so these are calculated in the funtion  `get_exps` in `helpers.py`
 using `contracts.yaml`. Zipline has hardcoded symbols for futures (see `finance/constants.py`) 

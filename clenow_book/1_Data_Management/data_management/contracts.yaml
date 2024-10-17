@@ -2,13 +2,13 @@
 calF:
   FI  : {months: [H,M,U,Z], freq: WOM-3TUE, exch: CBOT}                  # Fixed Income
   VX  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-3FRI, exch: CFE}
-  CU  : {months: [H,M,U,Z], freq: WOM-3MON, exch: CME}                   # Currencies - using 4 months, perhaps there are more now?
+  CU  : {months: [H,M,U,Z], freq: WOM-3MON, exch: CME}                   # Currencies - using 4 months
   EQ  : {months: [H,M,U,Z], freq: WOM-3FRI, exch: CME}                   # Index
   ME  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-4TUE, exch: COMEX} # Metals     - 4th tues - an approx.
   EN  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-4MON, exch: CME}   # Energy     - 4th mon - an approx.
-  LS  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-3MON, exch: CME}           # Livestock  - should be 16th every month
-  SO  : {months: [F,H,K,N,U,V,X,Z], freq: WOM-3MON, exch: NYMEX}               # Softs      - should be 11 days before last business day
-  GR  : {months: [F,H,K,N,Q,U,V,X,Z], freq: WOM-2THU, exch: CBOT}                # Grains
+  LS  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-3MON, exch: CME}   # Livestock  - should be 16th every month
+  SO  : {months: [F,H,K,N,U,V,X,Z], freq: WOM-3MON, exch: NYMEX}         # Softs      - should be 11 days before last business day
+  GR  : {months: [F,H,K,N,Q,U,V,X,Z], freq: WOM-2THU, exch: CBOT}        # Grains
 
 calF_fut: {
   'FI' : 'ED,FV,TU,TY,US',
@@ -27,7 +27,7 @@ calF_fut: {
 calF0:
   FI  : {months: [H,M,U,Z], freq: WOM-3TUE, exch: CBOT}                  # Fixed Income
   VX  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-3FRI, exch: CFE}
-  CU  : {months: [H,M,U,Z], freq: WOM-3MON, exch: CME}                   # Currencies - using 4 months, perhaps there are more now?
+  CU  : {months: [H,M,U,Z], freq: WOM-3MON, exch: CME}                   # Currencies - using 4 months
   EQ  : {months: [H,M,U,Z], freq: WOM-3FRI, exch: CME}                   # Index
   ME  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-4TUE, exch: COMEX} # Metals     - 4th tues - an approx.
   EN  : {months: [F,G,H,J,K,M,N,Q,U,V,X,Z], freq: WOM-4MON, exch: CME}   # Energy     - 4th mon - an approx.
@@ -35,7 +35,7 @@ calF0:
   SO  : {months: [H,K,N,U,Z], freq: WOM-3MON, exch: NYMEX}               # Softs      - should be 11 days before last business day
   GR  : {months: [H,K,N,U,Z], freq: WOM-2THU, exch: CBOT}                # Grains
 
-# CME Symbols - kept for reference only
+# Exchange Symbols - kept for reference only
 calF_fut0: {
   'FI' : 'ZB,ZN,ZF,ZT',
   'EQ' : 'ES,NQ,YM,RTY',

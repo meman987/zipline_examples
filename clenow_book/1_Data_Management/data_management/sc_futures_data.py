@@ -10,7 +10,7 @@ from tqdm import tqdm                # Used for progress bar
 from .helpers import *
 
 cwd = os.path.dirname(os.path.realpath(__file__))
-to_year = int(datetime.date.today().year) + 1
+to_year = int(datetime.date.today().year) + 2
 
 conf = f'{cwd}/contracts.yaml'
 expirations_lookup = get_exps(conf, 'calF', 1970, to_year)
@@ -47,12 +47,24 @@ def to_zipline_format(filename_):
   
   return sc_symbol, root_symbol, zl_symbol, expiration_date
 
+def check_filename(filename_):
+  if len(filename_.split('-')) != 2:
+    return False
+  symbol, exch   = filename_.split('-')
+  if not len(symbol) in [5,6] or not symbol[-2:].isdigit() or not symbol[-3] in CONTRACT_CODE2MONTH.keys() :
+    return False
+  return True
+
 def sc_futures_data(environ, asset_db_writer, minute_bar_writer, daily_bar_writer, adjustment_writer,
                         calendar, start_session, end_session,cache, show_progress, output_dir):
   global df_files
 
-  filenames = [f[:-4].split('/')[-1] for f in glob.glob(f'{data_path}/*.dly')]
+  filenames_ = [f[:-4].split('/')[-1] for f in glob.glob(f'{data_path}/*.dly')]
+  filenames = list(filter(check_filename, filenames_))
 
+  if len(filenames) != len(filenames_):
+    print(f'WARNING: These files will be ignored since the do not adhere to the format SS[S]MYY:\n{list(filter(lambda x: not check_filename(x), filenames_))}')
+  
   if not filenames:
     raise ValueError("No files found in folder.")
 
@@ -65,7 +77,7 @@ def sc_futures_data(environ, asset_db_writer, minute_bar_writer, daily_bar_write
   df_files = df_files[~df_files.zl_root_symbol.isnull()]
    
   if df_files.expiration_date.isnull().sum().any():
-    print('ERROR: missing expiration dates! See ./missing_expiration_data.csv for details.')
+    print('ERROR: missing expiration dates! See ./missing_expiration_data.csv for the full list.')
     print(df_files[df_files.expiration_date.isnull()])
     df_files[df_files.expiration_date.isnull()].to_csv('./missing_expiration_data.csv')
     sys.exit(1)
@@ -110,70 +122,74 @@ def process_futures(filenames, sessions, metadata):
   for filename in tqdm(filenames, desc='Loading data...'):
     sid += 1
 
-    print(f'{filename}...', end='', flush=True)
-    
-    df = pd.read_csv(f'{data_path}/{filename}.dly', index_col=[0], parse_dates=[0])
-    df.columns = list(map(lambda x: x.strip().lower(), df.columns))
+    # print(f'{filename}...', end='', flush=True)
+    try:
+      df = pd.read_csv(f'{data_path}/{filename}.dly', index_col=[0], parse_dates=[0])
+      df.columns = list(map(lambda x: x.strip().lower(), df.columns))
 
-    if df.shape[0] == 0:
-      print(f'WARNING: empty file {filename}')
-      continue
+      if df.shape[0] == 0:
+        print(f'WARNING: empty file {filename}')
+        continue
 
-    if ((df<0).any()).any():
-      print(f'WARNING: Negative prices are not supported:\n{(df<0).any()}. These are set to 0.')
-      print(f'shape:{df.shape} df.dtypes:{df.dtypes}...', end='', flush=True)
-      for col in df.columns[(df<0).any()]:
-        df.loc[col][df[col]<0] = 0
+      if ((df<0).any()).any():
+        print(f'WARNING: Negative prices are not supported:\n{(df<0).any()}. These are set to 0.')
+        print(f'shape:{df.shape} df.dtypes:{df.dtypes}...', end='', flush=True)
+        for col in df.columns[(df<0).any()]:
+          df.loc[col][df[col]<0] = 0
 
-    sc_root_symbol, zl_root_symbol, zl_symbol, expiration_date = to_zipline_format(filename)
+      sc_root_symbol, zl_root_symbol, zl_symbol, expiration_date = to_zipline_format(filename)
 
-    if zl_root_symbol is None or expiration_date is None:
-      print('ERROR: None found is for root symbol {zl_root_symbol} and/or expiration date {expiration_date} in {filename}')
-      sys.exit(1)
-    
-    df['root_symbol']     = zl_root_symbol
-    df['symbol']          = zl_symbol
-    df['expiration_date'] = expiration_date
+      if zl_root_symbol is None or expiration_date is None:
+        print('ERROR: None found is for root symbol {zl_root_symbol} and/or expiration date {expiration_date} in {filename}')
+        sys.exit(1)
 
-    # Check for minor currency quotes
-    adjustment_factor = futures_lookup.loc[
-            futures_lookup['root_symbol'] == df.iloc[0]['root_symbol']
-            ]['minor_fx_adj'].iloc[0]
+      df['root_symbol']     = zl_root_symbol
+      df['symbol']          = zl_symbol
+      df['expiration_date'] = expiration_date
 
-    if adjustment_factor*1==0:
-      print('ERROR: Incorrect min_fx_adj {adjustment_factor} for {filename}')
-      sys.exit(1)
-      
-    df['open'] *= adjustment_factor
-    df['high'] *= adjustment_factor
-    df['low'] *= adjustment_factor
-    df['close'] *= adjustment_factor
+      # Check for minor currency quotes
+      adjustment_factor = futures_lookup.loc[
+              futures_lookup['root_symbol'] == df.iloc[0]['root_symbol']
+              ]['minor_fx_adj'].iloc[0]
 
-    # Avoid potential high / low data errors in data set
-    # And apply minor currency adjustment for USc quotes
-    df['high'] = df[['high', 'close']].max(axis=1) 
-    df['low']  = df[['low', 'close']].min(axis=1) 
-    df['high'] = df[['high', 'open']].max(axis=1)
-    df['low']  = df[['low', 'open']].min(axis=1) 
+      if adjustment_factor*1==0:
+        print('ERROR: Incorrect min_fx_adj {adjustment_factor} for {filename}')
+        sys.exit(1)
 
-    # Synch to the official exchange calendar
-    df = df.reindex(sessions.tz_localize(None))[df.index[0]:df.index[-1] ]
+      df['open'] *= adjustment_factor
+      df['high'] *= adjustment_factor
+      df['low'] *= adjustment_factor
+      df['close'] *= adjustment_factor
 
-    # df.fillna(method='ffill', inplace=True)
-    df = df.ffill()
-    df = df.dropna()
+      # Avoid potential high / low data errors in data set
+      # And apply minor currency adjustment for USc quotes
+      df['high'] = df[['high', 'close']].max(axis=1) 
+      df['low']  = df[['low', 'close']].min(axis=1) 
+      df['high'] = df[['high', 'open']].max(axis=1)
+      df['low']  = df[['low', 'open']].min(axis=1) 
 
-    # Cut dates before 2000, avoiding Zipline issue
-    # df = df['2000-01-01':]
+      # Synch to the official exchange calendar
+      df = df.reindex(sessions.tz_localize(None))[df.index[0]:df.index[-1] ]
 
-    # Prepare contract metadata
-    make_meta(sid, metadata, df, sessions)
+      # df.fillna(method='ffill', inplace=True)
+      df = df.ffill()
+      df = df.dropna()
 
-    del df['openinterest']
-    del df['expiration_date']
-    del df['root_symbol']
-    del df['symbol']
+      # Cut dates before 2000, avoiding Zipline issue
+      # df = df['2000-01-01':]
 
-    yield sid, df        
+      # Prepare contract metadata
+      make_meta(sid, metadata, df, sessions)
+
+      del df['openinterest']
+      del df['expiration_date']
+      del df['root_symbol']
+      del df['symbol']
+
+      yield sid, df        
         
-
+    except Exception as e:
+      print(f'ERROR importing {filename}! This file will not be imported.')
+      print(e)
+      input('Press any key to continue, or ctrl-C to exit')
+      continue
