@@ -4,7 +4,7 @@ Here are some examples and notes taken when reading Trading Evolved by
 [Andreas Clenow](https://www.clenow.com/books).
 
 Some good stuff about Zipline Data Management can be found [here](https://pypi.org/project/zipline-norgatedata/).
-In particular, see the note about Zipline only using 20 years of data and 
+In particular, see the note about Zipline only using 20 years of data and the 
 suggested patch! Also, check out this note about [futures contracts](https://github.com/quantopian/zipline/issues/2340).
 
 
@@ -12,25 +12,26 @@ suggested patch! Also, check out this note about [futures contracts](https://git
 
 We need some data to work with. Here we'll use the [yfinance](https://pypi.org/project/yfinance/)
 package to download some test data. Run `python3 yf.py` and some test data should end
-up in the folder `./csv`.
+up in the folder `./csv`. Use the `--tickers` argument to select the tickers you want to download data for.
 
 
 ## Import data into zipline
 
-Make sure that `PYTHONPATH` includes this folder: `export PYTHONPATH=$PYTHONPATH:$HOME/<git_repo>/clenow_book/1_Data_Management`.
+Make sure that the `PYTHONPATH` environment variable includes this folder: `export PYTHONPATH=$PYTHONPATH:$HOME/<git_repo>/clenow_book/1_Data_Management`.
 [`direnv`](https://direnv.net/) is a good tool to automate management of environment variables!
 
 
-Have a look at `extension.py` in `zipline-files` and copy it to `~/.zipline`.
+Have a look at `extension.py` in `patched_files` and copy it to `~/.zipline`.
 
 Then do try this:
 
 ```
 zipline ingest -b random_stock_data
 
-# cleanup
+# list bundles
 zipline bundles
 
+# cleanup
 zipline clean -b random_stock_data --before 2024-10-07
 # or
 zipline clean -b random_stock_data --keep-last=1
