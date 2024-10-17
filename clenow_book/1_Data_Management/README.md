@@ -5,7 +5,7 @@ Here are some examples and notes taken when reading Trading Evolved by
 
 Some good stuff about Zipline Data Management can be found [here](https://pypi.org/project/zipline-norgatedata/).
 In particular, see the note about Zipline only using 20 years of data and 
-suggested patch!
+suggested patch! Also, check out this note about [futures contracts](https://github.com/quantopian/zipline/issues/2340).
 
 
 ## Test data
@@ -57,17 +57,17 @@ the exchange is open. There are packages that are maintained by others, now that
 'dead'. See [pandas-market-calendars](https://pypi.org/project/pandas-market-calendars/) and 
 [exchange-calendars](https://pypi.org/project/exchange-calendars/).
 
-`calendar_example.py` and `calendar_example2.py` shows some use cases for calendars.
+`show_calendar.py` shows some use cases for calendars.
 
 
 ## View Time Series
 
-Try `show_bundle.py` and `show_bunlde2.py`. You'll probably get an error. See below for a solution.
+Try `show_bundle.py`. You'll probably get an error. See below for a solution.
 
 
 ## Problem - no 'US' equities after ingest of random_stock_data
 
-Running `python3 show_bundles2.py` will give an error for our bundle `random_stock_data`.
+Running `python3 show_bundles.py` will give an error for our bundle `random_stock_data`.
 
 The table exchanges in the metadata stored in sqlite seams to be messed up.
 
@@ -97,7 +97,7 @@ print(sys.path)
 print(importlib.util.find_spec("zipline"))
 ```
 
-Copy file `zipline-files/assets.py` to this folder and try `show_bundles2.py` again.
+Copy file `zipline-files/assets.py` to this folder and try `show_bundles.py` again.
 
 
 ## More tickers for Yahoo Finance
