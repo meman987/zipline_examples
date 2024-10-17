@@ -9,7 +9,7 @@ from pathlib import Path
 # Change the path to where you have your data
 path = Path('./csv')
 
-def random_stock_data(environ,
+def yf_stock_data(environ,
                       asset_db_writer,
                       minute_bar_writer,
                       daily_bar_writer,
@@ -39,19 +39,27 @@ def random_stock_data(environ,
 def process_stocks(symbols, sessions, metadata, divs):
     
     for sid, symbol in enumerate(symbols):
-        print('Loading {}...'.format(symbol))
+        print(f'Loading {symbol}...', end='', flush=True)
 
         df = pd.read_csv('{}/{}.csv'.format(path, symbol), index_col=[0], parse_dates=[0])
         df.columns = list(map(lambda x: x.lower(), df.columns))
+        # divs = pd.DataFrame(columns=['sid','amount','ex_date','record_date','declared_date','pay_date'])
 
         start_date = df.index[0]
         end_date = df.index[-1]
 
+        if ((df<0).any()).any():
+            print(f'Negative prices are not supported:\n{(df<0).any()}')
+            print(f'shape:{df.shape} df.dtypes:{df.dtypes}...', end='', flush=True)
+            for col in df.columns[(df<0).any()]:
+                df[col][df[col]<0] = 0
+
         # Synch to the official exchange calendar
         df = df.reindex(sessions.tz_localize(None))[start_date:end_date]
 
-        df.fillna(method='ffill', inplace=True)
+        df.ffill(inplace=True)
         df.dropna(inplace=True)
+#        df.fillna(0, inplace=True)
         ac_date = end_date + pd.Timedelta(days=1)             # auto close date
 
         metadata.loc[sid] = start_date, end_date, ac_date, symbol, 'NYSE'
@@ -64,19 +72,21 @@ def process_stocks(symbols, sessions, metadata, divs):
             
             # Slice off the days with dividends
             tmp = df[df.iloc[:,idx] != 0.0].iloc[:,idx]
-            
-            div = pd.DataFrame(data=tmp.index.tolist(), columns=['ex_date'])
-            div['record_date']   = pd.NaT
-            div['declared_date'] = pd.NaT
-            div['pay_date']      = pd.NaT
-            div['amount']        = tmp.tolist()
-            div['sid']           = sid
 
-            ind = pd.Index(range(divs.shape[0], divs.shape[0] + div.shape[0]))
-            div.set_index(ind, inplace=True)
+            if tmp.shape[0] > 0:
 
-            divs = pd.concat([divs, div], axis=0)
-            
-            print(divs)
+                div = pd.DataFrame(data=tmp.index.tolist(), columns=['ex_date'])
+                div['record_date']   = pd.NaT
+                div['declared_date'] = pd.NaT
+                div['pay_date']      = pd.NaT
+                div['amount']        = tmp.tolist()
+                div['sid']           = sid
+
+                ind = pd.Index(range(divs.shape[0], divs.shape[0] + div.shape[0]))
+                div.set_index(ind, inplace=True)
+
+                divs = pd.concat([divs, div], axis=0)
+
+                print(f'divs:\n{divs}...')
             
         yield sid, df
