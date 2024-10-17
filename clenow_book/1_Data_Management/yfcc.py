@@ -1,3 +1,11 @@
+#
+# 241017 This is "work in progress"
+#
+#
+#
+
+__author__ = 'Jonas Colmsjö'
+
 import sys
 import argparse
 import pandas as pd
