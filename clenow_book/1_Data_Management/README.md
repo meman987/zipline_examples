@@ -51,6 +51,9 @@ bundle.asset_finder.retrieve_all(bundle.asset_finder.sids)
 [Equity(0 [AAPL]), Equity(1 [SPY])]
 ```
 
+Now ingest some Yahoo Finance data!
+
+
 ## Calendars
 
 Exchange calendars are key in zipline. There cannot be any transactions outside the window where 
@@ -119,3 +122,33 @@ energy:          `CL=F,HO=F,RB=F,NG=F,BZ=F`
 All: `6A=F,6B=F,6C=F,6E=F,6J=F,6N=F,6S=F,CT=F,CC=F,OJ=F,SB=F,KC=F,LBS=F,GF=F,HE=F,LE=F,ZC=F,ZO=F,KE=F,ZR=F,ZM=F,ZS=F,ES=F,YM=F,NQ=F,RTY=F,ZB=F,ZN=F,ZF=F,ZT=F,GC=F,SI=F,HG=F,PA=F,PL=F,CL=F,HO=F,RB=F,NG=F,BZ=F`
 
 NOTE: Use single quotes around these in bash.
+
+
+## Random Equitiy and Futures data (provided by Clenow)
+
+Andreas Clenow provides some random data that can be used to play around with. There is a link to a Dropbox on the 
+[hompage](https://www.followingthetrend.com/trading-evolved/). The source code for the examples in the book is also
+provided here as well as Errata and various discussions.
+
+I've made some changes to `random_futures_data.py` in the version in the folder `data_management`.
+Set the environment variable `CLENOW_DATA` to the path for his data and run `zipline ingest -b random_futures_data`
+to ingest this data.
+
+
+## SierraChart
+
+SierraChart has reasonable pricing and support both equities and futures. Only windows is suported but it works fine
+in [Wine](https://www.winehq.org/) if you're on MacOS or Linux.
+
+Set the envioronment variable `SC_DATA` and run `zipline ingest -b sc_futures_data` to ingest futures.
+SierraChart do not provide expirations dates so these are calculated in the funtion  `get_exps` in `helpers.py`
+using `contracts.yaml`. Zipline has hardcoded symbols for futures (see `finance/constants.py`) 
+and SierraChart use different symbols in many cases (typically the ones used by the exchanges).
+Check `sc_meta.csv` (and update if necessary).
+
+
+## CSI Data
+
+[Weisser Zwerg](https://weisser-zwerg.dev/posts/trading_evolved_1/) has provided the source necessary to ingest data
+from CSI Data (which is the data provider used in the Clenow book). Test `data_management/csi_futures_data.py` 
+if you have CSI data (I have not tested this).
