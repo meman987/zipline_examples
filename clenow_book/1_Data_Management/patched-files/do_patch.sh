@@ -11,7 +11,8 @@ fi
 cp assets.py         $1/zipline/assets/
 cp calendar_utils.py $1/zipline/utils/
 
-cp  exchange_calendar.py $1/exchange_calendars/
+# TODO: Problem, need to check!
+#cp  exchange_calendar.py $1/exchange_calendars/
 
 cp extension.py ~/.zipline/
 

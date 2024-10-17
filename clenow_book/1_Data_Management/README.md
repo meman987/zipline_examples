@@ -30,7 +30,11 @@ zipline ingest -b random_stock_data
 
 # cleanup
 zipline bundles
+
 zipline clean -b random_stock_data --before 2024-10-07
+# or
+zipline clean -b random_stock_data --keep-last=1
+
 zipline bundles
 
 
