@@ -5,4 +5,5 @@ Here are some examples and notes taken when reading Trading Evolved by
 
 These notes are taken in the order I read the chapters in the book. I
 started with learning how to get some data into zipline since everything
-else depends on this.
+else depends on this. I then focused on showing some statistics for the
+generated trades.
